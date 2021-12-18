@@ -2,37 +2,38 @@ import React, { useEffect, useState } from "react";
 import Container from "../../components/shared/Container";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllTodos, deleteTodo } from "../actions/TodoActions";
+import { fetchAllTodos, deleteTodo, todoLoadSuccess } from "../actions/TodoActions";
 import axios from "axios";
 import Loader from "../../components/shared/Loader";
 import AddTodo from "./AddTodo";
 import { toast } from 'react-toastify';
+import { TodoConstants } from "../constants/TodoConstants";
 
 const Todo = () => {
-  const todoList = useSelector((state) => state.todoList.todos);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const todoState = useSelector((state) => state.todoList );
+  const todoList = todoState.todos;
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [isEditing, setIsEditing] = useState(false);
   const [editTodoData, setEditTodoData] = useState({});
   const dispatch = useDispatch();
 
   const fetchTodoList = async () => {
-    setIsLoading(true);
+    dispatch(fetchAllTodos());
     const todos = await axios
       .get("http://localhost:8000/todos")
       .catch((error) => {
         console.log("Error while fetching todos", error);
       });
-    dispatch(fetchAllTodos(todos.data));
-    setIsLoading(false);
+    dispatch(todoLoadSuccess(todos.data));
   };
 
   const handleDeleteTodo = async (id) => {
-    setIsLoading(true);
     const response = await axios
       .delete(`http://localhost:8000/todos/${id}`)
       .catch((err) => console.log(err));
     if (response.status === 200) {
       dispatch(deleteTodo(id));
+      dispatch({ type: TodoConstants.UPDATE_TODO_END });
       toast.success("Todo deleted successfully!!", {
         autoClose: 3000,
         pauseOnHover: true,
@@ -43,24 +44,17 @@ const Todo = () => {
         pauseOnHover: true,
       });
     }
-    setIsLoading(false);
   };
 
   const getEditedTodo = (id) => {
-    const editedTodo = todoList.filter((todo) => todo.id === id) || [];
-    setEditTodoData(editedTodo[0]);
-    setIsEditing(true);
+    const editedTodo = todoList.filter((todo) => todo.id === id)[0] || [];
+    setEditTodoData(editedTodo);
+    dispatch({type: TodoConstants.UPDATE_TODO_START, payload: editedTodo});
   };
 
   useEffect(() => {
     fetchTodoList();
   }, []);
-
-  const toggleIsEditing = (flag) => {
-    setIsEditing(flag);
-  };
-
-  //   console.log("todo list from redux", todoList);
 
   return (
     <Container>
@@ -71,7 +65,6 @@ const Todo = () => {
               <i className="fas fa-arrow-left"></i>
             </NavLink>
           </div>
-          {/* <div>Todo List</div> */}
         </div>
       </div>
       <div className="row">
@@ -97,16 +90,14 @@ const Todo = () => {
                   </div>
                 </li>
               ))}
-            {todoList.length === 0 && isLoading && <Loader height="20vh" />}
-            {todoList.length === 0 && !isLoading && <div>No todo found</div>}
+            {todoList.length === 0 && todoState.isLoading && <Loader height="20vh" />}
+            {todoList.length === 0 && !todoState.isLoading && <div>No todo found</div>}
           </ul>
         </div>
         <div className="col-md-5">
-          <div className="h6">{isEditing ? "Edit" : "Add"} Todo</div>
+          <div className="h6">{todoState.isEditing ? "Edit" : "Add"} Todo</div>
           <AddTodo
-            isEditing={isEditing}
             updateTodo={editTodoData}
-            onIsEditingChange={(e) => toggleIsEditing(e)}
           />
         </div>
       </div>
