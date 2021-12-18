@@ -9,7 +9,7 @@ const Navbar = (props) => {
   }
   return (
     <>
-      <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
         <NavLink className="nav-link text-white" to="/">
           React App
         </NavLink>
@@ -38,8 +38,8 @@ const Navbar = (props) => {
             {loginFlag && (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/product">
-                    Product
+                  <NavLink className="nav-link" to="/products">
+                    Products
                   </NavLink>
                 </li>
                 <li className="nav-item">
@@ -47,21 +47,30 @@ const Navbar = (props) => {
                     User
                   </NavLink>
                 </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/todo">
+                    Todo
+                  </NavLink>
+                </li>
               </>
             )}
           </ul>
           <ul className="navbar-nav">
             <li className="nav-item">
-              { loginFlag && <>
-                <NavLink className="nav-link" to='/' onClick={logOut}>
-                 Logout
-                </NavLink>
-              </>}
-              { !loginFlag && <>
-                <NavLink className="nav-link" to="/login">
-                 Login
-                </NavLink>
-              </>}
+              {loginFlag && (
+                <>
+                  <NavLink className="nav-link" to="/" onClick={logOut}>
+                    Logout
+                  </NavLink>
+                </>
+              )}
+              {!loginFlag && (
+                <>
+                  <NavLink className="nav-link" to="/login">
+                    Login
+                  </NavLink>
+                </>
+              )}
             </li>
           </ul>
         </div>
