@@ -1,9 +1,9 @@
 import { TodoConstants } from "../constants/TodoConstants";
 
-export const fetchAllTodos = (payload) => {
+export const fetchAllTodos = () => {
   return {
     type: TodoConstants.FETCH_ALL_TODOS,
-    payload: payload,
+    payload: {},
   };
 };
 
@@ -24,6 +24,13 @@ export const deleteTodo = (payload) => {
 export const editTodo = (payload) => {
   return {
     type: TodoConstants.UPDATE_TODO,
+    payload: payload,
+  };
+};
+
+export const todoLoadSuccess = (payload) => {
+  return {
+    type: TodoConstants.FETCH_ALL_TODOS_SUCCESS,
     payload: payload,
   };
 };
