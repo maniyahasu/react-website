@@ -1,9 +1,10 @@
 import React from "react";
+import Container from "../shared/Container";
 
 const Home = () => {
   return (
     <>
-      <div className="container">
+      <Container>
         <div className="pt-3">
           <div className="jumbotron jumbotron-fluid">
             <div className="container">
@@ -15,7 +16,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </>
   );
 };

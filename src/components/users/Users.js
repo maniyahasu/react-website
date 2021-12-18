@@ -4,6 +4,7 @@ import Loader from "../shared/Loader";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import UserCard from "../shared/UserCard";
+import Container from '../shared/Container';
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ const Users = () => {
 
   return (
     <>
-      <div className="container">
+      <Container>
         <div className="py-3 d-flex">
           <div className="row">
             <div className="col-md-12">
@@ -42,7 +43,7 @@ const Users = () => {
           </div>
         </div>
         <div className="body-content">
-          {isLoading && <Loader />}
+          {isLoading && <Loader height="80vh" />}
           <div className="user-card">
             <div className="row">
               {
@@ -56,7 +57,7 @@ const Users = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </>
   );
 };
