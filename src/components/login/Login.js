@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./Login.css";
+import "./Login.scss";
 
 const Login = (props) => {
   const history = useNavigate();
@@ -10,15 +10,31 @@ const Login = (props) => {
     username: "",
     password: "",
   });
+  const [formError, setFormError] = useState({
+    username: null,
+    password: null
+  });
   const [isLoggedIn, setisLoggedIn] = useState(false);
 
   // Method to handle all the input change event
   const inputChangeHandler = (event) => {
-    const name = event.target.name;
+    const { name, value } = event.target;
+    if (value.trim() === '') {
+      setFormError({
+        ...formError,
+        [name]: `${name} field is required`
+      });
+    } else {
+      setFormError({
+        ...formError,
+        [name]: null
+      });
+    }
     setloginState({
       ...loginState,
-      [name]: event.target.value,
+      [name]: value,
     });
+    console.log(formError);
   };
   const handleLoginSubmit = (event) => {
     event.preventDefault();
@@ -53,7 +69,8 @@ const Login = (props) => {
                     id="username"
                     className="form-control"
                     value={loginState.username}
-                    onChange={inputChangeHandler}
+                    onChange={(e) => inputChangeHandler(e)}
+                    onBlur={(e) => inputChangeHandler(e)}
                   />
                 </div>
                 <div className="form-group">
@@ -67,7 +84,8 @@ const Login = (props) => {
                     id="password"
                     className="form-control"
                     value={loginState.password}
-                    onChange={inputChangeHandler}
+                    onChange={(e) => inputChangeHandler(e)}
+                    onBlur={(e) => inputChangeHandler(e)}
                   />
                 </div>
                 <div className="form-group">

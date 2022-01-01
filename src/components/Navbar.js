@@ -1,9 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 
 const Navbar = (props) => {
+  const cartCount = useSelector(state => state.cartItems.cartCount);
   const loginFlag = props.isUserLoggedIn;
+
   const logOut = () => {
     props.onUserLoggedOut();
   }
@@ -72,6 +75,12 @@ const Navbar = (props) => {
                 </>
               )}
             </li>
+            {loginFlag && <li className="position-relative">
+              <NavLink className="nav-link" to="/cart">
+                <i className="fa fa-cart-plus"></i>
+                <span className="badge badge-primary cart-badge">{cartCount}</span>
+              </NavLink>
+            </li>}
           </ul>
         </div>
       </nav>

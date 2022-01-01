@@ -6,11 +6,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchAllProducts } from "../../redux/actions/ProductActions";
 import axios from "axios";
 import Loader from "../shared/Loader";
-import Container from '../shared/Container';
+import Container from "../shared/Container";
+import Filter from "../shared/Filter";
 
 // Loading the list of products using react redux
 
-const ProductList = (props) => {
+const ProductList = () => {
   const products = useSelector((state) => state.allProducts.products);
   const dispatch = useDispatch();
   const fetchAllProduct = async () => {
@@ -20,8 +21,11 @@ const ProductList = (props) => {
         console.log("error white fetching products", error);
       });
 
+    const productsArray = products.data.map(product => {
+      return {...product, quantity: 1}
+    });
     // dispatching actions to set products
-    dispatch(fetchAllProducts(products.data));
+    dispatch(fetchAllProducts(productsArray));
   };
   useEffect(() => {
     fetchAllProduct();
@@ -30,22 +34,25 @@ const ProductList = (props) => {
   return (
     <>
       <Container>
-        <div className="pt-3 d-flex">
-          <div className="pr-2">
-            <NavLink to="/">
+        <div className="pt-3 d-flex align-items-center justify-content-between">
+          <div className="d-flex">
+            <NavLink to="/" className="mr-2">
               <i className="fas fa-arrow-left"></i>
             </NavLink>
+            <div>Product List</div>
           </div>
-          <div>Product List</div>
+          <div>
+            <Filter />
+          </div>
         </div>
-        <div className="body-content my-4 row">
+        <div className="body-content my-3 row">
           {products.length > 0 &&
             products.map((product) => (
               <div className="col-md-3 pb-3" key={product.id}>
                 <Product product={product} />
               </div>
             ))}
-            { products.length === 0 && <Loader height='60vh' />}
+          {products.length === 0 && <Loader height="60vh" />}
         </div>
       </Container>
     </>

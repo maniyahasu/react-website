@@ -14,3 +14,9 @@ code {
 .body-content {
   height: 78vh;
 }
+.cart-badge {
+  position: absolute;
+  border-radius: 50%;
+  font-size: 10px;
+  top: 3px;
+}

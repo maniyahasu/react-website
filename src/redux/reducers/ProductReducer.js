@@ -1,24 +1,50 @@
 import { ProductActions } from "../constants/ProductConstant";
 
 const initialState = {
-  products: []
+  products: [],
+  productCategory: [],
+  masterProducts: [],
+  isProductFiltered: false,
 };
 
-export const fetchProductsReducer = (state = initialState, action) => {
-  switch (action.type) {
+export const fetchProductsReducer = (
+  state = initialState,
+  { type, payload }
+) => {
+  switch (type) {
     case ProductActions.FETCH_PRODUCTS:
-      return {...state, products: action.payload};
+      const category = payload
+        .map((p) => p.category)
+        .filter((item, i, self) => i === self.indexOf(item));
+      return {
+        ...state,
+        products: payload,
+        productCategory: category,
+        masterProducts: payload,
+        isProductFiltered: false
+      };
+    case ProductActions.FILTERED_PRODUCT:
+      return {
+        ...state,
+        products: state.masterProducts.filter(
+          (product) => product.category === payload
+        ),
+        isProductFiltered: true
+      };
+    case ProductActions.RESET_FILTER:
+      return { ...state, products: state.masterProducts, isProductFiltered: false };
+      
     default:
       return state;
   }
 };
 
-export const productDetailReducer = (state = {}, {type, payload}) => {
+export const productDetailReducer = (state = {}, { type, payload }) => {
   switch (type) {
     case ProductActions.PRODUCT_DETAIL:
-      return {...state, ...payload};
+      return { ...state, ...payload };
     case ProductActions.REMOVE_SELECTED_PRODUCT:
-      return {}
+      return {};
     default:
       return state;
   }

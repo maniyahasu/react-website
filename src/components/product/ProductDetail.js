@@ -30,8 +30,6 @@ const ProductDetail = () => {
     }   
   }, [productId]);
 
-  console.log("Selected product", product);
-
   return (
     <Container>
       <div className="py-3">

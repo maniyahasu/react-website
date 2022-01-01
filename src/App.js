@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -10,6 +10,7 @@ import Login from "./components/login/Login";
 import Todo from "./redux/components/Todo";
 import { ToastContainer } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
+import Cart from "./redux/components/cart/Cart";
 
 const App = () => {
   const [isUserLoggedIn, setisUserLoggedIn] = useState(false);
@@ -57,6 +58,9 @@ const App = () => {
         </Routes>
         <Routes>
           <Route path="/todo" element={<Todo />}></Route>
+        </Routes>
+        <Routes>
+          <Route path="/cart" element={<Cart />}></Route>
         </Routes>
       </Router>
     </>

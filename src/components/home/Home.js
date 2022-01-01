@@ -8,10 +8,9 @@ const Home = () => {
         <div className="pt-3">
           <div className="jumbotron jumbotron-fluid">
             <div className="container">
-              <h1 className="display-4">Fluid jumbotron</h1>
+              <h1 className="display-4">Welcome to React Website</h1>
               <p className="lead">
-                This is a modified jumbotron that occupies the entire horizontal
-                space of its parent.
+                Here, you will see the different kind of functions implemented using react.
               </p>
             </div>
           </div>
