@@ -52,7 +52,7 @@ const Cart = () => {
                             <div className="d-flex align-items-center justify-content-center">
                                 <img className="empty-cart-img" src='image/empty-cart.png' alt="Empty cart" />
                             </div>}
-                            { cartState.length === 0 && isCartItemLoading && <Loader height="100%"/>}
+                            { cartState.length !== 0 && isCartItemLoading && <Loader height="100%"/>}
                             {cartState.length > 0 && !isCartItemLoading ? (
                                 cartState.map(item => (
                                     <CartItem key={item.id} cartItem={item} />

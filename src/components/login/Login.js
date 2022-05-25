@@ -1,52 +1,67 @@
+import axios from "axios";
 import React from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import "./Login.scss";
 
 const Login = (props) => {
   const history = useNavigate();
-  const [loginState, setloginState] = useState({
-    username: "",
-    password: "",
-  });
-  const [formError, setFormError] = useState({
-    username: null,
-    password: null
-  });
-  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const userEmail = useRef();
+  const userPassword = useRef();
 
-  // Method to handle all the input change event
-  const inputChangeHandler = (event) => {
-    const { name, value } = event.target;
-    if (value.trim() === '') {
-      setFormError({
-        ...formError,
-        [name]: `${name} field is required`
+  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+
+  const loginFormSubmit = (event) => {
+    event.preventDefault();
+    const username = userEmail.current.value;
+    const password = userPassword.current.value;
+
+    if (username.trim().length === 0 || password.trim().length === 0) {
+      toast.error('Username and password can not be blank', { autoClose: 2000});
+      return;
+    }
+    const payload = {
+      username: userEmail.current.value,
+      password: userPassword.current.value
+    };
+    if (isRegister) {
+      // Register user
+      axios.post('http://localhost:8000/userLoginDetails', payload).then(resp => {
+        if (resp.status === 201 && resp.data.id) {
+          setIsRegister(false);
+          toast.success('Register successfull !!', { autoClose: 2000, pauseOnHover: true });
+          clearLoginForm();
+        } else {
+          toast.error('Error while registering the user !!', { autoClose: 2000, pauseOnHover: true });
+          clearLoginForm();
+        }
       });
     } else {
-      setFormError({
-        ...formError,
-        [name]: null
+      // Login section
+      axios.get(`http://localhost:8000/userLoginDetails?username=${username}&password=${password}`).then(resp => {
+        if (resp.status === 200 && resp.data.length > 0) {
+          setisLoggedIn(true);
+          toast.success('Login successfull !!', { autoClose: 2000, pauseOnHover: true });
+          localStorage.setItem('isLoggedIn', 'true');
+          props.onUserLoggedIn(true);
+          history("/");
+        } else {
+          toast.error('User does not exist, please register first', { autoClose: 2000, pauseOnHover: true });
+          clearLoginForm();
+        }
       });
     }
-    setloginState({
-      ...loginState,
-      [name]: value,
-    });
-    console.log(formError);
+
+
   };
-  const handleLoginSubmit = (event) => {
-    event.preventDefault();
-    setloginState({
-        username: "",
-        password: "",
-    });
-    setisLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');
-    props.onUserLoggedIn(true);
-    history("/");
-  };
+
+  const clearLoginForm = () => {
+    userEmail.current.value = '';
+    userPassword.current.value = '';
+  }
   return (
     <div id="login">
       <div className="container">
@@ -57,7 +72,7 @@ const Login = (props) => {
           <div id="login-column" className="col-md-6">
             <div id="login-box" className="col-md-12">
               <form autoComplete="off" id="login-form" className="form">
-                <h3 className="text-center text-info">Login</h3>
+                <h3 className="text-center text-info">{isRegister ? 'Register' : 'Login'}</h3>
                 <div className="form-group">
                   <label htmlFor="username" className="text-info">
                     Username:
@@ -68,9 +83,7 @@ const Login = (props) => {
                     name="username"
                     id="username"
                     className="form-control"
-                    value={loginState.username}
-                    onChange={(e) => inputChangeHandler(e)}
-                    onBlur={(e) => inputChangeHandler(e)}
+                    ref={userEmail}
                   />
                 </div>
                 <div className="form-group">
@@ -83,36 +96,31 @@ const Login = (props) => {
                     name="password"
                     id="password"
                     className="form-control"
-                    value={loginState.password}
-                    onChange={(e) => inputChangeHandler(e)}
-                    onBlur={(e) => inputChangeHandler(e)}
+                    ref={userPassword}
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="remember-me" className="text-info">
-                    <span>Remember me</span> 
-                    <span>
-                      <input
-                        id="remember-me"
-                        name="remember-me"
-                        type="checkbox"
-                      />
-                    </span>
-                  </label>
                   <br />
                   <input
                     type="submit"
                     name="submit"
                     className="btn btn-info btn-md"
-                    value="Login"
-                    onClick={(e) => handleLoginSubmit(e)}
+                    value={isRegister ? 'Register' : 'Login'}
+                    onClick={(e) => loginFormSubmit(e)}
                   />
+                  {isRegister && <input
+                    type="button"
+                    name="submit"
+                    className="btn btn-info btn-md ml-2"
+                    value='Cancel'
+                    onClick={() => setIsRegister(false)}
+                  />}
                 </div>
-                <div id="register-link" className="text-right">
-                  <a href="#" className="text-info">
+                {!isRegister && <div id="register-link" className="text-right">
+                  <a href="#" className="text-info" onClick={() => setIsRegister(true)}>
                     Register here
                   </a>
-                </div>
+                </div>}
               </form>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import "./App.scss";
 import Navbar from "./components/Navbar";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+// import { Redirect } from 'react-router';
 import { useState, useEffect } from "react";
 import Home from "./components/home/Home";
 import ProductDetail from "./components/product/ProductDetail";
@@ -9,7 +10,7 @@ import Users from "./components/users/Users";
 import Login from "./components/login/Login";
 import Todo from "./redux/components/Todo";
 import { ToastContainer } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 import Cart from "./redux/components/cart/Cart";
 
 const App = () => {
@@ -20,7 +21,8 @@ const App = () => {
   }, [isUserLoggedIn]);
 
   const checkUserIsLoggedIn = () => {
-    const flag = localStorage.getItem("isLoggedIn");
+    const flag = localStorage.getItem("isLoggedIn") || false;
+    console.log("Is logged in", flag);
     flag ? setisUserLoggedIn(true) : setisUserLoggedIn(false);
   };
 
@@ -35,32 +37,23 @@ const App = () => {
 
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       <Router>
-        <Navbar isUserLoggedIn={isUserLoggedIn} onUserLoggedOut={handleUserLoggedOut}/>
+        <Navbar isUserLoggedIn={isUserLoggedIn} onUserLoggedOut={handleUserLoggedOut} />
         <Routes>
-          <Route path="/" element={<Home />}></Route>
-        </Routes>
-        <Routes>
-          <Route path="/products" element={<ProductList />}></Route>
-        </Routes>
-        <Routes>
-          <Route path="/user" element={<Users />}></Route>
-        </Routes>
-        <Routes>
+          <Route path="/" element={<Home />} />
+
+          <Route path="/products" element={isUserLoggedIn ? <ProductList /> : <Navigate to="/" />} />
+          <Route path="/user" element={<Users />} />
+          <Route path="/product/:productId" element={<ProductDetail />} />
+          <Route path="/todo" element={<Todo />} />
+          <Route path="/cart" element={<Cart />} />
+
           <Route
             path="/login"
             element={<Login onUserLoggedIn={(e) => handleUserLoggedIn(e)} />}
-          ></Route>
-        </Routes>
-        <Routes>
-          <Route path="/product/:productId" element={<ProductDetail />}></Route>
-        </Routes>
-        <Routes>
-          <Route path="/todo" element={<Todo />}></Route>
-        </Routes>
-        <Routes>
-          <Route path="/cart" element={<Cart />}></Route>
+          />
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
         </Routes>
       </Router>
     </>
